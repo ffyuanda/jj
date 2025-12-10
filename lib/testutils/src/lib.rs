@@ -543,10 +543,12 @@ pub fn commit_with_tree(store: &Arc<Store>, tree: MergedTree) -> Commit {
             tz_offset: 0,
         },
     };
+    let (root_tree, conflict_labels) = tree.into_tree_ids_and_labels();
     let commit = backend::Commit {
         parents: vec![store.root_commit_id().clone()],
         predecessors: vec![],
-        root_tree: tree.into_tree_ids(),
+        root_tree,
+        conflict_labels: conflict_labels.into_merge(),
         change_id: ChangeId::from_hex("abcd"),
         description: "description".to_string(),
         author: signature.clone(),
@@ -562,7 +564,7 @@ pub fn dump_tree(merged_tree: &MergedTree) -> String {
     let mut buf = String::new();
     let trees = merged_tree.trees().unwrap();
     writeln!(&mut buf, "merged tree (sides: {})", trees.num_sides()).unwrap();
-    for tree in trees.iter() {
+    for tree in &trees {
         writeln!(&mut buf, "  tree {}", tree.id()).unwrap();
         for (path, entry) in tree.entries_matching(&EverythingMatcher) {
             match entry {
@@ -599,8 +601,8 @@ macro_rules! assert_tree_eq {
         let left_tree: &::jj_lib::merged_tree::MergedTree = &$left_tree;
         let right_tree: &::jj_lib::merged_tree::MergedTree = &$right_tree;
         assert_eq!(
-            left_tree.tree_ids(),
-            right_tree.tree_ids(),
+            left_tree.tree_ids_and_labels(),
+            right_tree.tree_ids_and_labels(),
             "{}:\n left: {}\nright: {}",
             format_args!($($args)*),
             $crate::dump_tree(left_tree),
@@ -773,7 +775,6 @@ pub fn assert_no_forgotten_test_files(test_dir: &Path) {
 /// UTF-8 validation, as on ZFS with the `utf8only=on` property set.
 #[cfg(unix)]
 pub fn check_strict_utf8_fs(dir: &Path) -> bool {
-    use std::ffi::OsStr;
     use std::os::unix::ffi::OsStrExt as _;
 
     let test_file_normal = tempfile::Builder::new()

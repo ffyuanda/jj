@@ -489,7 +489,6 @@ $ jj diff --from b80 --to @- # No output means these are identical
 $ jj diff --from 31a --to @  # No output means these are identical
 ```
 
-
 ### How do I resume working on an existing change?
 
 There are two ways to resume working on an earlier change: `jj new` then `jj squash`,
@@ -531,6 +530,7 @@ empty commit. To revert the changes merged in from the second parent, instead
 use `jj restore --from <first parent>` .
 
 Example:
+
 ```text
 @
 |
@@ -540,6 +540,7 @@ B D
 |/
 A
 ```
+
 To revert the merge in `C`, create a new commit with `jj new C`,
 then `jj restore --from B`, and then describe the message
 with something like `jj desc -m "Revert the merge of D into B`. Now, commit `@`
@@ -575,6 +576,7 @@ which can slow down both tools and occasionally cause file access conflicts.
 
 **Solution**: Configure Vite to ignore the `.jj` directory by adding it to the
 `server.watch.ignored` array inside your Vite configuration, for example:
+
 ```js
 // vite.config.js
 export default defineConfig({

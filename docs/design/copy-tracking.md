@@ -63,6 +63,7 @@ lossy; rebasing a commit and then rebasing it back yields the same content. We
 should ideally preserve this property when possible.
 
 For example:
+
 ```console
 $ jj log
 C rename bar->baz
@@ -75,13 +76,13 @@ $ jj rebase -r C -o A
 $ jj rebase -r C -o B # Takes us back to the state above
 ```
 
-
 #### Reverting the parent commit should be a no-op
 
 Patches should be reversible so you can make a change and then revert it, and
 end up with an empty diff across both commits.
 
 For example:
+
 ```console
 $ jj log
 B rename foo->bar
@@ -95,6 +96,7 @@ $ jj diff --from B- --to B+ # Should be empty
 #### Parallelize/serialize
 
 This is a special case of the lossless rebase.
+
 ```console
 $ jj log
 E edit qux
@@ -118,6 +120,7 @@ $ jj rebase -r D -A C
 #### Copies inside merge commit
 
 We should be able to resolve a naming conflict:
+
 ```console
 $ jj log
 D  resolve naming conflict by choosing `foo` as the source
@@ -135,6 +138,7 @@ We should also be able to back out that resolution and get back into the
 name-conflicted state.
 
 We should be able to rename files that exist on only one side:
+
 ```console
 $ jj log
 D  rename foo2->foo3 and bar2->bar3
@@ -198,6 +202,7 @@ existing file involved. That makes logical sense, but I'm not sure how useful
 it will be.
 
 The data structure might look like this:
+
 ```rust
 // Current `TreeValue::File` variant:
 File { id: FileId, executable: bool },
@@ -248,6 +253,7 @@ Notation:
 * The `2:bar->1:foo` means that copy ID 2 (i.e. hash of the `CopyHistory`
   struct) has file `bar`, which was copied from copy ID `1`, where it was
   called `foo`.
+
 ```console
 Commit K:
 name: foo, id: K, copy_id: 1:foo
@@ -264,6 +270,7 @@ name: baz, id: M, copy_id: 5:baz->1:foo
 
 This graph also shows the relationship between the copy IDs and which commits
 they appear in:
+
 ```mermaid
 graph LR
 
@@ -389,6 +396,7 @@ when materialized. It will therefore not show up in the working copy until the
 user has resolved the conflict.
 
 For example:
+
 ```console
 M set foo="bye"
 |
@@ -484,6 +492,7 @@ then all apply to `foo`, which means we get a 4-sided conflict.
 #### Example: Convergent renames
 
 Consider this "convergent copy/rename" scenario:
+
 ```console
 $ jj log
 C rename bar->baz
@@ -497,6 +506,7 @@ $ jj new B C
 
 It seems clear that `baz`'s copy graph should inherit from both `foo` and `bar`,
 producing a merge in copy graph. The trees would look like this:
+
 ```
 Commit A:
 name: foo, id: aaa111, copy_id: 1:foo
@@ -530,7 +540,6 @@ A add foo
 
 $ jj rebase -r C -o A
 ```
-
 
 ```console
 $ jj log
@@ -567,6 +576,7 @@ propagated to `bar`.
 #### Example: Divergent renames
 
 Consider this "divergent rename" scenario:
+
 ```console
 $ jj log
 C rename foo->baz
@@ -642,7 +652,6 @@ $ jj new D E -m F
 ```
 
 If F is empty (auto-merged), it should have the same state as E before.
-
 
 ### Log
 
@@ -825,7 +834,6 @@ That works for calculating the resulting tree, but it does not seem to allow for
 doing the conflict algebra we currently do. That means that things like
 parallelizing commits and then serializing them again would lose copy
 information.
-
 
 [same_change_rule]: https://github.com/martinvonz/jj/blob/560d66ecee5a9904b42dbc0b89333f0c27c683de/lib/src/merge.rs#L98-L111
 

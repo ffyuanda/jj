@@ -24,6 +24,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   filesystem's behavior, but this can be overridden manually by setting
   `working-copy.exec-bit-change = "respect" | "ignore"`.
 
+* `jj workspace add` now also works for empty destination directories.
+
 ### Fixed bugs
 
 * Broken symlink on Windows. [#6934](https://github.com/jj-vcs/jj/issues/6934).
@@ -94,10 +96,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 * The config options `git.auto-local-bookmark` and `git.push-new-bookmarks` are
   deprecated in favor of `remotes.<name>.auto-track-bookmarks`. For example:
+
   ```toml
   [remotes.origin]
   auto-track-bookmarks = "glob:*"
   ```
+
   For more details, refer to
   [the docs](docs/config.md#automatic-tracking-of-bookmarks).
 
@@ -105,10 +109,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   bookmarks, please track them with `jj bookmark track`. Alternatively, consider
   setting up an auto-tracking configuration to avoid the chore of tracking
   bookmarks manually. For example:
+
   ```toml
   [remotes.origin]
   auto-track-bookmarks = "glob:*"
   ```
+
   For more details, refer to
   [the docs](docs/config.md#automatic-tracking-of-bookmarks).
 
@@ -872,7 +878,6 @@ Thanks to the people who made this release happen!
 * Scott Taylor (@scott2000)
 * Vincent Ging Ho Yim (@cenviity)
 * Yuya Nishihara (@yuja)
-
 
 ## [0.30.0] - 2025-06-04
 
@@ -1911,7 +1916,6 @@ Thanks to the people who made this release happen!
 ### Fixed bugs
 
 * `jj config unset <TABLE-NAME>` no longer removes a table (such as `[ui]`.)
-
 
 ### Contributors
 
@@ -4382,7 +4386,6 @@ No changes, only trying to get the automated build to work.
 ## [0.3.0] - 2022-03-12
 
 Last release before this changelog started.
-
 
 [unreleased]: https://github.com/jj-vcs/jj/compare/v0.36.0...HEAD
 [0.36.0]: https://github.com/jj-vcs/jj/compare/v0.35.0...v0.36.0
